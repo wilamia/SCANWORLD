@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/main_page"
+        android:icon="@drawable/frame_10"
+        android:title="Главная" />
+    <item
+        android:id="@+id/about_us"
+        android:icon="@drawable/frame_11"
+        android:title="О нас" />
+    <item
+        android:id="@+id/instagram"
+        android:icon="@drawable/insta"
+        android:title="scanworld" />
+    <item
+        android:id="@+id/facebook"
+        android:icon="@drawable/ic_facebook"
+        android:title="ScanWorld" />
+    <item
+        android:id="@+id/phone_number"
+        android:icon="@drawable/ic_number"
+        android:title="+375 00 000 00 00" />
+    <item
+        android:id="@+id/email"
+        android:icon="@drawable/ic_email"
+        android:title="scanworld@gmail.com" />
+</menu>

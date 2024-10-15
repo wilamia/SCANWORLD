@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Scanworld</string>
+    <string name="p1">Сканер идентификатора штрих-кода</string>
+    <string name="download_image">Загрузить изображение</string>
+    <string name="camera">Камера</string>
+    <string name="create_new">Создать свой</string>
+    <string name="turn_on_flash">Включить фонарик</string>
+    <string name="turn_off_flash">Выключить фонарик</string>
+    <string name="scan_again">Отсканировать заново</string>
+    <string name="back">Назад</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+</resources>
