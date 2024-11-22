@@ -2,26 +2,26 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/main_page"
-        android:icon="@drawable/frame_10"
-        android:title="Главная" />
+        android:icon="@drawable/ic_home"
+        android:title="@string/mainWindow" />
     <item
         android:id="@+id/about_us"
-        android:icon="@drawable/frame_11"
-        android:title="О нас" />
+        android:icon="@drawable/ic_about"
+        android:title="@string/aboutUs" />
     <item
         android:id="@+id/instagram"
-        android:icon="@drawable/insta"
-        android:title="scanworld" />
+        android:icon="@drawable/ic_instagram"
+        android:title="@string/scanworld" />
     <item
         android:id="@+id/facebook"
         android:icon="@drawable/ic_facebook"
-        android:title="ScanWorld" />
+        android:title="@string/scanworldtitle" />
     <item
         android:id="@+id/phone_number"
         android:icon="@drawable/ic_number"
-        android:title="+375 00 000 00 00" />
+        android:title="@string/number" />
     <item
         android:id="@+id/email"
         android:icon="@drawable/ic_email"
-        android:title="scanworld@gmail.com" />
+        android:title="@string/email" />
 </menu>

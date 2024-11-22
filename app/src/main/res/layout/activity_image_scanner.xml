@@ -5,13 +5,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/back_to_home_button"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/android_large___6sd">
+        android:background="@drawable/background"
+        android:fitsSystemWindows="true">
 
         <Button
             android:id="@+id/select_image_button"
@@ -33,9 +35,9 @@
 
         <ImageView
             android:id="@+id/image_view"
-            android:layout_width="300dp"
-            android:layout_height="300dp"
-            android:layout_marginTop="80dp"
+            android:layout_width="350dp"
+            android:layout_height="350dp"
+            android:layout_marginTop="72dp"
             android:background="@drawable/border"
             android:scaleType="centerCrop"
             app:layout_constraintEnd_toEndOf="parent"
@@ -67,15 +69,19 @@
             android:background="#FFC0ABF9"
             app:layout_constraintBottom_toTopOf="@+id/image_view"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"
+            app:titleTextAppearance="@style/ToolbarTitleStyle"
             tools:ignore="MissingConstraints" />
 
         <Button
-            android:id="@+id/button2"
-            android:layout_width="145dp"
-            android:layout_height="46dp"
+            android:id="@+id/back_to_home_button_image"
+            android:layout_width="186dp"
+            android:layout_height="53dp"
             android:layout_marginTop="8dp"
+            android:fontFamily="@font/gothampro_light"
             android:text="Назад"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.883"
@@ -92,6 +98,9 @@
         app:headerLayout="@layout/nav_header"
         app:itemIconSize="32dp"
         app:itemIconTint="@color/black"
+        app:itemTextAppearance="@style/MenuStyle"
         app:itemTextColor="#000000"
-        app:menu="@menu/menu" />
+        android:paddingTop="25dp"
+        app:menu="@menu/menu"
+        tools:ignore="VisualLintBounds" />
 </androidx.drawerlayout.widget.DrawerLayout>

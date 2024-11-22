@@ -8,8 +8,9 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Scanworld"
-        android:textSize="22sp"
+        android:text="SCANWORLD"
+        android:textSize="20sp"
         android:textColor="#000000"
+        android:fontFamily="@font/gothampro_light"
         android:gravity="start" />
 </LinearLayout>

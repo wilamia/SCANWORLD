@@ -12,13 +12,12 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.provider.Settings
 import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
@@ -32,6 +31,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 
+@Suppress("DEPRECATION")
 class CreateBarcode : AppCompatActivity() {
     private lateinit var urlEditText: EditText
     private lateinit var qrCodeImageView: ImageView
@@ -42,40 +42,39 @@ class CreateBarcode : AppCompatActivity() {
     private lateinit var navigationView: com.google.android.material.navigation.NavigationView
     private var qrCodeBitmap: Bitmap? = null
 
-    private val REQUEST_CODE_STORAGE = 102
+    private val requestCodeStorage = 102
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_create_barcode)
 
-        // Инициализация компонентов
         urlEditText = findViewById(R.id.urlEditText)
         qrCodeImageView = findViewById(R.id.barcodeImageView)
         downloadButton = findViewById(R.id.downloadButton)
         generateButton = findViewById(R.id.generateButton)
         backToHomeButton = findViewById(R.id.back_to_home_button_3)
-        drawerLayout = findViewById(R.id.drawer_layout) // Убедитесь, что ID соответствует вашему XML
+        drawerLayout = findViewById(R.id.drawer_layout)
         navigationView = findViewById(R.id.nav_view)
 
-        // Настройка тулбара
+
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setHomeAsUpIndicator(R.drawable.frame_4) // Убедитесь, что иконка существует
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu)
 
-        // Обработчик нажатий для открытия бокового меню
         toolbar.setNavigationOnClickListener {
             drawerLayout.open()
+            overridePendingTransition(R.animator.no_animation_in, R.animator.no_animation_out)
         }
 
-        // Настройка NavigationView
         navigationView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.main_page -> {
                     val intentMain = Intent(this, MainActivity::class.java)
                     startActivity(intentMain)
                     drawerLayout.close()
+                    overridePendingTransition(R.animator.no_animation_in, R.animator.no_animation_out)
                     true
                 }
 
@@ -83,6 +82,7 @@ class CreateBarcode : AppCompatActivity() {
                     val intentAbout = Intent(this, AboutUs::class.java)
                     startActivity(intentAbout)
                     drawerLayout.close()
+                    overridePendingTransition(R.animator.no_animation_in, R.animator.no_animation_out)
                     true
                 }
 
@@ -90,6 +90,7 @@ class CreateBarcode : AppCompatActivity() {
                     val instagramIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.instagram.com/your_instagram_account"))
                     startActivity(instagramIntent)
                     drawerLayout.close()
+                    overridePendingTransition(R.animator.no_animation_in, R.animator.no_animation_out)
                     true
                 }
 
@@ -97,6 +98,7 @@ class CreateBarcode : AppCompatActivity() {
                     val facebookIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.facebook.com/your_facebook_account"))
                     startActivity(facebookIntent)
                     drawerLayout.close()
+                    overridePendingTransition(R.animator.no_animation_in, R.animator.no_animation_out)
                     true
                 }
 
@@ -104,18 +106,20 @@ class CreateBarcode : AppCompatActivity() {
                     val phoneIntent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:+37500000000"))
                     startActivity(phoneIntent)
                     drawerLayout.close()
+                    overridePendingTransition(R.animator.no_animation_in, R.animator.no_animation_out)
                     true
                 }
 
                 R.id.email -> {
-                    // Отправка email
                     val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
-                        data = Uri.parse("mailto:scanworld@gmail.com") // только email
+                        data = Uri.parse("mailto:scanworld@gmail.com")
                     }
                     startActivity(emailIntent)
                     drawerLayout.close()
+                    overridePendingTransition(R.animator.no_animation_in, R.animator.no_animation_out)
                     true
                 }
+
                 else -> false
             }
         }
@@ -138,7 +142,8 @@ class CreateBarcode : AppCompatActivity() {
         }
 
         backToHomeButton.setOnClickListener {
-            finish()  // Возвращение на главный экран
+            finish()
+            overridePendingTransition(R.animator.no_animation_in, R.animator.no_animation_out)
         }
     }
 
@@ -171,19 +176,21 @@ class CreateBarcode : AppCompatActivity() {
     }
 
     private fun requestWriteExternalStoragePermission() {
-        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), REQUEST_CODE_STORAGE)
+        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), requestCodeStorage)
     }
 
+    @RequiresApi(Build.VERSION_CODES.R)
     private fun requestManageStoragePermission() {
         val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
         val uri: Uri = Uri.fromParts("package", packageName, null)
         intent.data = uri
-        startActivityForResult(intent, REQUEST_CODE_STORAGE)
+        startActivityForResult(intent, requestCodeStorage)
     }
 
+    @Deprecated("This method has been deprecated in favor of using the Activity Result API\n      which brings increased type safety via an {@link ActivityResultContract} and the prebuilt\n      contracts for common intents available in\n      {@link androidx.activity.result.contract.ActivityResultContracts}, provides hooks for\n      testing, and allow receiving results in separate, testable classes independent from your\n      activity. Use\n      {@link #registerForActivityResult(ActivityResultContract, ActivityResultCallback)}\n      with the appropriate {@link ActivityResultContract} and handling the result in the\n      {@link ActivityResultCallback#onActivityResult(Object) callback}.")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_CODE_STORAGE) {
+        if (requestCode == requestCodeStorage) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 if (Environment.isExternalStorageManager()) {
                     qrCodeBitmap?.let { bitmap -> writeImageToStorage(bitmap) }
@@ -229,14 +236,5 @@ class CreateBarcode : AppCompatActivity() {
                 Toast.makeText(this, "Ошибка сохранения: ${e.message}", Toast.LENGTH_LONG).show()
             }
         }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return super.onOptionsItemSelected(item)
     }
 }

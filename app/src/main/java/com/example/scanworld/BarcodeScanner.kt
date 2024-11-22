@@ -8,8 +8,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.method.ScrollingMovementMethod
 import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
+import android.view.View
 import android.webkit.URLUtil.isValidUrl
 import android.widget.Button
 import android.widget.TextView
@@ -20,6 +19,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import com.google.zxing.BarcodeFormat
 import com.journeyapps.barcodescanner.BarcodeCallback
 import com.journeyapps.barcodescanner.BarcodeResult
 import com.journeyapps.barcodescanner.DefaultDecoderFactory
@@ -31,6 +31,7 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
 
+@Suppress("DEPRECATION")
 class BarcodeScanner : AppCompatActivity() {
     private lateinit var barcodeView: BarcodeView
     private lateinit var scanResultTextView: TextView
@@ -47,26 +48,27 @@ class BarcodeScanner : AppCompatActivity() {
         const val CAMERA_REQUEST_CODE = 101
     }
 
+    @SuppressLint("SetTextI18n", "CutPasteId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_barcode_scanner)
+        hideStatusBar()
 
-        // Инициализация компонентов
         barcodeView = findViewById(R.id.barcode_scanner)
         scanResultTextView = findViewById(R.id.scan_result)
         flashlightButton = findViewById(R.id.flashlight_button)
         scanAgainButton = findViewById(R.id.scan_again_button)
         backToHomeButton = findViewById(R.id.back_to_home_button)
-        drawerLayout = findViewById(R.id.back_to_home_button)
+        drawerLayout = findViewById(R.id.activity_barcode_scanner)
         navigationView = findViewById(R.id.nav_view)
         result = findViewById(R.id.scan_result)
-        result.setMovementMethod(ScrollingMovementMethod())
+        result.movementMethod = ScrollingMovementMethod()
 
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setHomeAsUpIndicator(R.drawable.frame_4)
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu)
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
             != PackageManager.PERMISSION_GRANTED
@@ -92,10 +94,12 @@ class BarcodeScanner : AppCompatActivity() {
 
         backToHomeButton.setOnClickListener {
             finish()
+            overridePendingTransition(R.animator.no_animation_in, R.animator.no_animation_out)
         }
 
         toolbar.setNavigationOnClickListener {
             drawerLayout.open()
+            overridePendingTransition(R.animator.no_animation_in, R.animator.no_animation_out)
         }
 
         navigationView.setNavigationItemSelectedListener { menuItem ->
@@ -104,12 +108,14 @@ class BarcodeScanner : AppCompatActivity() {
                     val intentMain = Intent(this, MainActivity::class.java)
                     startActivity(intentMain)
                     drawerLayout.close()
+                    overridePendingTransition(R.animator.no_animation_in, R.animator.no_animation_out)
                     true
                 }
 
                 R.id.about_us -> {
                     val intentAbout = Intent(this, AboutUs::class.java)
                     startActivity(intentAbout)
+                    overridePendingTransition(R.animator.no_animation_in, R.animator.no_animation_out)
                     drawerLayout.close()
                     true
                 }
@@ -117,6 +123,7 @@ class BarcodeScanner : AppCompatActivity() {
                 R.id.instagram -> {
                     val instagramIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.instagram.com/your_instagram_account"))
                     startActivity(instagramIntent)
+                    overridePendingTransition(R.animator.no_animation_in, R.animator.no_animation_out)
                     drawerLayout.close()
                     true
                 }
@@ -124,6 +131,7 @@ class BarcodeScanner : AppCompatActivity() {
                 R.id.facebook -> {
                     val facebookIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.facebook.com/your_facebook_account"))
                     startActivity(facebookIntent)
+                    overridePendingTransition(R.animator.no_animation_in, R.animator.no_animation_out)
                     drawerLayout.close()
                     true
                 }
@@ -131,6 +139,7 @@ class BarcodeScanner : AppCompatActivity() {
                 R.id.phone_number -> {
                     val phoneIntent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:+37500000000"))
                     startActivity(phoneIntent)
+                    overridePendingTransition(R.animator.no_animation_in, R.animator.no_animation_out)
                     drawerLayout.close()
                     true
                 }
@@ -140,6 +149,7 @@ class BarcodeScanner : AppCompatActivity() {
                         data = Uri.parse("mailto:scanworld@gmail.com")
                     }
                     startActivity(emailIntent)
+                    overridePendingTransition(0, 0)
                     drawerLayout.close()
                     true
                 }
@@ -148,17 +158,32 @@ class BarcodeScanner : AppCompatActivity() {
             }
         }
     }
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return super.onOptionsItemSelected(item)
+    private fun hideStatusBar() {
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
+        actionBar?.hide()
     }
 
     private fun setupScanner() {
-        barcodeView.decoderFactory = DefaultDecoderFactory()
+        val formats = listOf(
+            BarcodeFormat.AZTEC,
+            BarcodeFormat.CODABAR,
+            BarcodeFormat.CODE_39,
+            BarcodeFormat.CODE_93,
+            BarcodeFormat.CODE_128,
+            BarcodeFormat.DATA_MATRIX,
+            BarcodeFormat.EAN_8,
+            BarcodeFormat.EAN_13,
+            BarcodeFormat.ITF,
+            BarcodeFormat.PDF_417,
+            BarcodeFormat.QR_CODE,
+            BarcodeFormat.UPC_A,
+            BarcodeFormat.UPC_E,
+            BarcodeFormat.RSS_14,
+            BarcodeFormat.RSS_EXPANDED,
+            BarcodeFormat.MAXICODE,
+        )
+
+        barcodeView.decoderFactory = DefaultDecoderFactory(formats)
 
         val settings = CameraSettings().apply {
             isAutoFocusEnabled = true
@@ -166,11 +191,11 @@ class BarcodeScanner : AppCompatActivity() {
         barcodeView.cameraSettings = settings
 
         barcodeView.decodeContinuous(object : BarcodeCallback {
+            @SuppressLint("SetTextI18n")
             override fun barcodeResult(result: BarcodeResult) {
                 if (!hasScanned) {
                     hasScanned = true
-
-                    if (result.barcodeFormat == com.google.zxing.BarcodeFormat.QR_CODE) {
+                    if (result.barcodeFormat == BarcodeFormat.QR_CODE) {
                         val scannedText = result.text
                         scanResultTextView.text = "QR Code отсканирован: $scannedText"
 
@@ -179,11 +204,10 @@ class BarcodeScanner : AppCompatActivity() {
                                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(scannedText))
                                 startActivity(intent)
                             } else {
-                                Toast.makeText(this@BarcodeScanner, "Отсанированный URL невалидный", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(this@BarcodeScanner, "Отсканированный URL невалидный", Toast.LENGTH_SHORT).show()
                             }
                         }
                     } else {
-
                         scanResultTextView.text = "Штрих-код: ${result.text}"
                         fetchProductInfo(result.text)
                     }
@@ -193,7 +217,7 @@ class BarcodeScanner : AppCompatActivity() {
             override fun possibleResultPoints(resultPoints: List<com.google.zxing.ResultPoint>) {}
         })
     }
-    @SuppressLint("SetTextI18n")
+    @SuppressLint("SetTextI18n", "DefaultLocale")
     private fun fetchProductInfo(barcode: String) {
         Log.d("ImageScanner", "Информация о штрих-коде: $barcode")
 
@@ -205,9 +229,12 @@ class BarcodeScanner : AppCompatActivity() {
                     if (product != null) {
                         val displayBrand = product.brands?.capitalize() ?: "N/A"
                         val displayName = product.product_name?.capitalize() ?: "N/A"
-                        val countries = product.countries_tags
-                            ?.map { it.replace("en:", "").trim().capitalize() }
-                            ?.joinToString(", ") ?: "N/A"
+                        val countries = product.countries_tags?.joinToString(", ") {
+                            it.replace(
+                                "en:",
+                                ""
+                            ).trim().capitalize()
+                        } ?: "N/A"
 
                         scanResultTextView.text = """
                         Штрих-код: $barcode
@@ -246,9 +273,6 @@ class BarcodeScanner : AppCompatActivity() {
             }
         }
     }
-    private fun showToast(message: String) {
-        Toast.makeText(scanResultTextView.context, message, Toast.LENGTH_SHORT).show()
-    }
 
     private fun toggleFlashlight() {
         isFlashlightOn = !isFlashlightOn
@@ -266,6 +290,7 @@ class BarcodeScanner : AppCompatActivity() {
         barcodeView.pause()
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == CAMERA_REQUEST_CODE) {

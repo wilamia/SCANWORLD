@@ -1,7 +1,9 @@
 package com.example.scanworld
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.net.Uri
@@ -15,6 +17,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.navigation.NavigationView
 import com.google.zxing.BarcodeFormat
@@ -33,13 +37,12 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
 
-
+@Suppress("DEPRECATION")
 class ImageScanner : AppCompatActivity() {
     private lateinit var selectImageButton: Button
     private lateinit var scanResultTextView: TextView
     private lateinit var imageView: ImageView
     private lateinit var backToHomeButton: Button
-    private lateinit var result: TextView
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navigationView: NavigationView
     private var croppedBitmap: Bitmap? = null
@@ -47,75 +50,77 @@ class ImageScanner : AppCompatActivity() {
     private companion object {
         const val PICK_IMAGE_REQUEST = 1001
         const val CROP_IMAGE_REQUEST = 1002
+        const val PERMISSION_REQUEST_CODE = 1003
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_image_scanner)
-        result = findViewById(R.id.scan_result)
+
+        checkPermissions()
+
+        scanResultTextView = findViewById(R.id.scan_result)
         drawerLayout = findViewById(R.id.drawer_layout)
         navigationView = findViewById(R.id.nav_view)
-        result.setMovementMethod(ScrollingMovementMethod())
+        scanResultTextView.movementMethod = ScrollingMovementMethod()
+
         selectImageButton = findViewById(R.id.select_image_button)
-        scanResultTextView = findViewById(R.id.scan_result)
         imageView = findViewById(R.id.image_view)
-        backToHomeButton = findViewById(R.id.back_to_home_button)
+        backToHomeButton = findViewById(R.id.back_to_home_button_image)
+
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setHomeAsUpIndicator(R.drawable.frame_4)
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu)
 
         toolbar.setNavigationOnClickListener {
             drawerLayout.open()
+            overridePendingTransition(R.animator.no_animation_in, R.animator.no_animation_out)
         }
+
         backToHomeButton.setOnClickListener {
             finish()
+            overridePendingTransition(R.animator.no_animation_in, R.animator.no_animation_out)
         }
 
         navigationView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.main_page -> {
-                    val intentMain = Intent(this, MainActivity::class.java)
-                    startActivity(intentMain)
+                    startActivity(Intent(this, MainActivity::class.java))
                     drawerLayout.close()
+                    overridePendingTransition(R.animator.no_animation_in, R.animator.no_animation_out)
                     true
                 }
-
                 R.id.about_us -> {
-                    val intentAbout = Intent(this, AboutUs::class.java)
-                    startActivity(intentAbout)
+                    startActivity(Intent(this, AboutUs::class.java))
                     drawerLayout.close()
+                    overridePendingTransition(R.animator.no_animation_in, R.animator.no_animation_out)
                     true
                 }
-
                 R.id.instagram -> {
-                    val instagramIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.instagram.com/your_instagram_account"))
-                    startActivity(instagramIntent)
+                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://www.instagram.com/your_instagram_account")))
                     drawerLayout.close()
+                    overridePendingTransition(R.animator.no_animation_in, R.animator.no_animation_out)
                     true
                 }
-
                 R.id.facebook -> {
-                    val facebookIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.facebook.com/your_facebook_account"))
-                    startActivity(facebookIntent)
+                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://www.facebook.com/your_facebook_account")))
                     drawerLayout.close()
+                    overridePendingTransition(R.animator.no_animation_in, R.animator.no_animation_out)
                     true
                 }
-
                 R.id.phone_number -> {
-                    val phoneIntent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:+37500000000"))
-                    startActivity(phoneIntent)
+                    startActivity(Intent(Intent.ACTION_DIAL, Uri.parse("tel:+37500000000")))
                     drawerLayout.close()
+                    overridePendingTransition(R.animator.no_animation_in, R.animator.no_animation_out)
                     true
                 }
-
                 R.id.email -> {
-
-                    val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
+                    startActivity(Intent(Intent.ACTION_SENDTO).apply {
                         data = Uri.parse("mailto:scanworld@gmail.com")
-                    }
-                    startActivity(emailIntent)
+                    })
                     drawerLayout.close()
+                    overridePendingTransition(R.animator.no_animation_in, R.animator.no_animation_out)
                     true
                 }
                 else -> false
@@ -124,15 +129,22 @@ class ImageScanner : AppCompatActivity() {
 
         selectImageButton.setOnClickListener {
             openImagePicker()
+            overridePendingTransition(R.animator.no_animation_in, R.animator.no_animation_out)
         }
     }
 
+    private fun checkPermissions() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), PERMISSION_REQUEST_CODE)
+        }
+    }
 
     private fun openImagePicker() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         startActivityForResult(intent, PICK_IMAGE_REQUEST)
     }
 
+    @Deprecated("This method has been deprecated in favor of using the Activity Result API\n      which brings increased type safety via an {@link ActivityResultContract} and the prebuilt\n      contracts for common intents available in\n      {@link androidx.activity.result.contract.ActivityResultContracts}, provides hooks for\n      testing, and allow receiving results in separate, testable classes independent from your\n      activity. Use\n      {@link #registerForActivityResult(ActivityResultContract, ActivityResultCallback)}\n      with the appropriate {@link ActivityResultContract} and handling the result in the\n      {@link ActivityResultCallback#onActivityResult(Object) callback}.")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when {
@@ -143,8 +155,12 @@ class ImageScanner : AppCompatActivity() {
             requestCode == CROP_IMAGE_REQUEST && resultCode == RESULT_OK && data != null -> {
                 val extras = data.extras
                 croppedBitmap = extras?.getParcelable("data")
-                imageView.setImageBitmap(croppedBitmap)
-                croppedBitmap?.let { decodeBarcodeFromImage(it) }
+                croppedBitmap?.let {
+                    imageView.setImageBitmap(it)
+                    decodeBarcodeFromImage(it)
+                } ?: run {
+                    Toast.makeText(this, "Ошибка: не удалось получить обрезанное изображение.", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
@@ -153,10 +169,10 @@ class ImageScanner : AppCompatActivity() {
         val cropIntent = Intent("com.android.camera.action.CROP").apply {
             setDataAndType(imageUri, "image/*")
             putExtra("crop", "true")
-            putExtra("aspectX", 1)
-            putExtra("aspectY", 1)
-            putExtra("outputX", 300)
-            putExtra("outputY", 300)
+            putExtra("aspectX", 3.5)
+            putExtra("aspectY", 2)
+            putExtra("outputX", 350)
+            putExtra("outputY", 350)
             putExtra("return-data", true)
         }
         startActivityForResult(cropIntent, CROP_IMAGE_REQUEST)
@@ -172,9 +188,23 @@ class ImageScanner : AppCompatActivity() {
                 multiFormatReader.setHints(
                     mapOf(
                         DecodeHintType.POSSIBLE_FORMATS to listOf(
-                            BarcodeFormat.QR_CODE,
+                            BarcodeFormat.AZTEC,
+                            BarcodeFormat.CODABAR,
+                            BarcodeFormat.CODE_39,
+                            BarcodeFormat.CODE_93,
                             BarcodeFormat.CODE_128,
-                            BarcodeFormat.CODE_39
+                            BarcodeFormat.DATA_MATRIX,
+                            BarcodeFormat.EAN_8,
+                            BarcodeFormat.EAN_13,
+                            BarcodeFormat.ITF,
+                            BarcodeFormat.PDF_417,
+                            BarcodeFormat.QR_CODE,
+                            BarcodeFormat.UPC_A,
+                            BarcodeFormat.UPC_E,
+                            BarcodeFormat.RSS_14,
+                            BarcodeFormat.RSS_EXPANDED,
+                            BarcodeFormat.MAXICODE,
+                            BarcodeFormat.UPC_EAN_EXTENSION
                         )
                     )
                 )
@@ -193,7 +223,7 @@ class ImageScanner : AppCompatActivity() {
                             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(scannedText))
                             startActivity(intent)
                         } else {
-                            Toast.makeText(this, "Отсанированный URL невалидный", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "Отсканированный URL невалидный", Toast.LENGTH_SHORT).show()
                         }
                     }
                 } else {
@@ -221,7 +251,6 @@ class ImageScanner : AppCompatActivity() {
         scanResultTextView.text = "Штрих-код не найден."
     }
 
-    // Utility function to check if the string is a valid URL
     private fun isValidUrl(url: String): Boolean {
         return url.startsWith("http://") || url.startsWith("https://")
     }
@@ -232,7 +261,7 @@ class ImageScanner : AppCompatActivity() {
         return Bitmap.createBitmap(source, 0, 0, source.width, source.height, matrix, true)
     }
 
-    @SuppressLint("SetTextI18n")
+    @SuppressLint("SetTextI18n", "DefaultLocale")
     private fun fetchProductInfo(barcode: String) {
         Log.d("ImageScanner", "Информация о штрих-коде: $barcode")
 
@@ -244,16 +273,19 @@ class ImageScanner : AppCompatActivity() {
                     if (product != null) {
                         val displayBrand = product.brands?.capitalize() ?: "N/A"
                         val displayName = product.product_name?.capitalize() ?: "N/A"
-                        val countries = product.countries_tags
-                            ?.map { it.replace("en:", "").trim().capitalize() }
-                            ?.joinToString(", ") ?: "N/A"
+                        val countries = product.countries_tags?.joinToString(", ") {
+                            it.replace(
+                                "en:",
+                                ""
+                            ).trim().capitalize()
+                        } ?: "N/A"
 
                         scanResultTextView.text = """
                         Штрих-код: $barcode
                         Бренд: $displayBrand
                         Название продукта: $displayName
                         Страны: $countries
-                    """.trimIndent()
+                        """.trimIndent()
 
                         val productLink = product.link
                         if (!productLink.isNullOrEmpty()) {

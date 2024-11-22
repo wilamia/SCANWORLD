@@ -5,13 +5,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/back_to_home_button"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/android_large___6sd">
+        android:background="@drawable/background"
+        android:fitsSystemWindows="true">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
@@ -21,8 +23,11 @@
             android:background="#FFC0ABF9"
             app:layout_constraintBottom_toTopOf="@+id/textView"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"
+            app:titleTextAppearance="@style/ToolbarTitleStyle"
             tools:ignore="MissingConstraints" />
 
         <TextView
@@ -42,7 +47,8 @@
             android:typeface="normal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+            app:layout_constraintTop_toBottomOf="@+id/toolbar"
+            tools:ignore="TextSizeCheck" />
 
         <Button
             android:id="@+id/button"
@@ -116,6 +122,9 @@
         app:headerLayout="@layout/nav_header"
         app:itemIconSize="32dp"
         app:itemIconTint="@color/black"
+        app:itemTextAppearance="@style/MenuStyle"
         app:itemTextColor="#000000"
-        app:menu="@menu/menu" />
+        android:paddingTop="25dp"
+        app:menu="@menu/menu"
+        tools:ignore="VisualLintBounds" />
 </androidx.drawerlayout.widget.DrawerLayout>

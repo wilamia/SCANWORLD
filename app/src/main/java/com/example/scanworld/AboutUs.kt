@@ -7,23 +7,23 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
+@Suppress("DEPRECATION")
 class AboutUs : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge() // Включаем edge-to-edge режим
+        enableEdgeToEdge()
         setContentView(R.layout.activity_about_us)
 
-        // Находим кнопку "Назад на главную"
         val backToHomeButton = findViewById<Button>(R.id.back_to_home_button_3)
         backToHomeButton.setOnClickListener {
-            finish() // Закрываем текущую активность
+            finish()
+            overridePendingTransition(R.animator.no_animation_in, R.animator.no_animation_out)
         }
 
-        // Устанавливаем обработчик для отступов
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.back_to_home_button)) { view, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             view.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets // Возвращаем insets для дальнейшей обработки
+            insets
         }
     }
 }

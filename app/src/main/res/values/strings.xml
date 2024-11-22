@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Scanworld</string>
+    <string name="app_name">SCANWORLD</string>
     <string name="p1">Сканер идентификатора штрих-кода</string>
     <string name="download_image">Загрузить изображение</string>
     <string name="camera">Камера</string>
@@ -10,4 +10,11 @@
     <string name="back">Назад</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="scanworld">scanworld</string>
+    <string name="scanworldtitle">ScanWorld</string>
+    <string name="number">+375 00 000 00 00</string>
+    <string name="email">scanworld@gmail.com</string>
+    <string name="mainWindow">Главная</string>
+    <string name="aboutUs">О нас</string>
+    <string name="description">Наше приложение для сканирования штрих-кодов предлагает пользователям уникальные возможности: считывание штрих-кодов как с помощью камеры, так и путем загрузки изображений с устройства. Это делает процесс простым и удобным. Мы также предоставляем возможность создавать собственные штрих-коды, что идеально подходит для бизнес-применений и личных нужд. Наша цель — помочь пользователям эффективно управлять своими товарами, упрощая инвентаризацию и продажи.</string>
 </resources>
